@@ -13,21 +13,22 @@ server.listen(PORT, function () { console.log('Listening on ' + PORT); });
 
 /** Begin websocket */
 
-const WebsocketServer = require('ws').Server;
+const WebSocketServer = require('ws').Server;
 
-const wss = new WebsocketServer({ server: server });
+const wss = new WebSocketServer({ server: server });
 
 wss.on('connection', function connection(ws) {
-    const numCLients = wss.clients.size;
-    console.log(`Connected clients: ${numCLients}`);
+    const numClients = wss.clients.size;
+    console.log('Connected clients:' + numClients);
 
-    wss.broadcast(`Current visitors: ${numCLients}`);   
+    wss.broadcast(`Current visitors: ${numClients}`);   
     
     if(ws.readyState === ws.OPEN) {
         ws.send('Welcome to my server');
     }
 
     ws.on('close', function(){
+        wss.broadcast(`Current visitors: ${numClients}`);
         console.log('A client has disconnected');
     });
 });
