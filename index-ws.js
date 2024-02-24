@@ -10,7 +10,7 @@ app.get('/', function(req, res) {
 server.on('request', app);
 server.listen(PORT, function () { console.log('Listening on ' + PORT); });
 
-pricess.on('SIGINT', function() {
+process.on('SIGINT', function() {
     server.close(() => {
         shutdownDB();
     });
@@ -31,6 +31,10 @@ wss.on('connection', function connection(ws) {
     if(ws.readyState === ws.OPEN) {
         ws.send('Welcome to my server');
     }
+
+    db.run(`INSERT INTO visitors (count time) 
+    VALUES (${numClients} datetime('now'))`
+    );
 
     ws.on('close', function(){
         wss.broadcast(`Current visitors: ${numClients}`);
