@@ -32,8 +32,8 @@ wss.on('connection', function connection(ws) {
         ws.send('Welcome to my server');
     }
 
-    db.run(`INSERT INTO visitors (count time) 
-    VALUES (${numClients} datetime('now'))`
+    db.run(`INSERT INTO visitors (count, time) 
+    VALUES (${numClients}, datetime('now'))`
     );
 
     ws.on('close', function(){
@@ -57,7 +57,7 @@ const db = new sqlite.Database(':memory:'); // Could be a file for persistent st
 
 db.serialize(function() {
     db.run(`CREATE TABLE visitors (
-        count INTEGER
+        count INTEGER,
         time TEXT
     )`);
 });
