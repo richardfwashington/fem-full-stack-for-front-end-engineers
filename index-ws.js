@@ -11,7 +11,12 @@ server.on('request', app);
 server.listen(PORT, function () { console.log('Listening on ' + PORT); });
 
 process.on('SIGINT', function() {
+    console.log('Shutting down');
+    wss.clients.forEach(function each(client) {
+        client.close();
+    });
     server.close(() => {
+        console.log('Server closed');
         shutdownDB();
     });
 });
