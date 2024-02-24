@@ -8,8 +8,13 @@ app.get('/', function(req, res) {
 });
 
 server.on('request', app);
-
 server.listen(PORT, function () { console.log('Listening on ' + PORT); });
+
+pricess.on('SIGINT', function() {
+    server.close(() => {
+        shutdownDB();
+    });
+});
 
 /** Begin websocket */
 
@@ -42,5 +47,27 @@ wss.broadcast = function broadcast(data) {
 /** End websocket */
 
 /** Begin database */
+
+const sqlite = require('sqlite3');
+const db = new sqlite.Database(':memory:'); // Could be a file for persistent storage date e.g. 'mydb.sqlite'
+
+db.serialize(function() {
+    db.run(`CREATE TABLE visitors (
+        count INTEGER
+        time TEXT
+    )`);
+});
+
+function getCounts() {
+    db.each("SELECT * FROM visitors", (err, row) => {
+        console.log(row);
+    })
+}
+
+function shutdownDB() {
+    getCounts();
+    console.log('Shutting down database');
+    db.close();
+}
 
 /** End database */
